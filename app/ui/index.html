@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B 站专栏 / 文集 → PDF</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23fb7299'/%3E%3Ctext x='16' y='23' font-size='20' font-weight='bold' text-anchor='middle' fill='white' font-family='sans-serif'%3EB%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="/ui/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">B</span>
+    <span>专栏 / 文集 → PDF</span>
+  </div>
+  <div class="account" id="account">
+    <span class="muted">检测登录状态…</span>
+  </div>
+</header>
+
+<main>
+
+  <section class="card">
+    <h2><span class="step-no">1</span>专栏地址</h2>
+    <p class="hint">支持：文集页、UP 主专栏页、文章页、opus 页，或直接填 UID</p>
+    <div class="row">
+      <input id="url" type="text" spellcheck="false"
+             placeholder="https://www.bilibili.com/read/readlist/rl45758">
+      <button id="btn-resolve" class="primary">识别文集</button>
+    </div>
+    <div id="author-line" class="author-line"></div>
+  </section>
+
+  <section class="card hidden" id="card-lists">
+    <h2><span class="step-no">2</span>选择文集与数量</h2>
+    <div class="row between wrap">
+      <label class="check"><input type="checkbox" id="check-all"> 全选</label>
+      <span class="muted" id="pick-summary"></span>
+    </div>
+    <table class="lists">
+      <thead>
+        <tr><th class="col-check"></th><th>文集</th><th class="col-count">篇数</th><th class="col-range">要多少篇</th></tr>
+      </thead>
+      <tbody id="lists-body"></tbody>
+    </table>
+    <p class="hint">
+      「要多少篇」可以留空表示全部；填 <code>20</code> 表示前 20 篇；填 <code>5-20</code> 表示第 5 到第 20 篇。
+    </p>
+  </section>
+
+  <section class="card hidden" id="card-output">
+    <h2><span class="step-no">3</span>输出设置</h2>
+
+    <div class="field">
+      <label for="name">PDF 名称</label>
+      <input id="name" type="text" placeholder="留空则用文集名">
+    </div>
+
+    <div class="field">
+      <label for="outdir">输出目录</label>
+      <div class="row">
+        <input id="outdir" type="text" list="recent-dirs" spellcheck="false">
+        <datalist id="recent-dirs"></datalist>
+        <button id="btn-pick">浏览…</button>
+      </div>
+      <p class="hint">会自动记住上次用的目录，下次直接沿用</p>
+    </div>
+
+    <div class="field" id="field-mode">
+      <label>选了多个文集时</label>
+      <div class="row wrap gap">
+        <label class="radio"><input type="radio" name="mode" value="merge" checked> 合并成一份 PDF</label>
+        <label class="radio"><input type="radio" name="mode" value="split"> 每个文集各出一份</label>
+      </div>
+    </div>
+  </section>
+
+  <section class="card hidden" id="card-run">
+    <h2><span class="step-no">4</span>生成</h2>
+    <div class="row">
+      <button id="btn-generate" class="primary big">开始生成 PDF</button>
+      <button id="btn-cancel" class="hidden danger">取消</button>
+      <button id="btn-open" class="hidden">打开输出目录</button>
+    </div>
+
+    <div class="progress hidden" id="progress-wrap">
+      <div class="bar"><div class="bar-inner" id="bar"></div></div>
+      <div class="progress-text" id="progress-text"></div>
+    </div>
+
+    <div class="log hidden" id="log"></div>
+    <div id="results"></div>
+  </section>
+
+</main>
+
+<footer>
+  <span class="muted">本工具仅供个人学习使用，版权归原作者及哔哩哔哩所有。</span>
+  <button id="btn-shutdown" class="link">退出程序</button>
+</footer>
+
+<!-- 网页内的文件夹选择器 -->
+<div class="modal hidden" id="fs-modal">
+  <div class="modal-mask" id="fs-mask"></div>
+  <div class="modal-box">
+    <div class="modal-head">
+      <span>选择输出目录</span>
+      <button class="icon" id="fs-close" title="关闭">×</button>
+    </div>
+    <div class="row fs-bar">
+      <button id="fs-up" title="上一级">↑ 上一级</button>
+      <input id="fs-path" type="text" spellcheck="false">
+      <button id="fs-go">前往</button>
+    </div>
+    <div class="fs-shortcuts">
+      <button id="fs-mkdir" class="mkdir-btn">＋ 新建文件夹</button>
+      <div class="fs-chips" id="fs-shortcuts"></div>
+    </div>
+    <div class="fs-new hidden" id="fs-new">
+      <input id="fs-new-name" type="text" placeholder="输入新文件夹名称" spellcheck="false">
+      <button id="fs-new-ok" class="primary">创建</button>
+      <button id="fs-new-cancel">取消</button>
+    </div>
+    <div class="fs-list" id="fs-list"></div>
+    <div class="fs-error muted" id="fs-error"></div>
+    <div class="modal-foot">
+      <button id="fs-native" class="link">改用系统对话框</button>
+      <span class="flex-spacer"></span>
+      <button id="fs-cancel">取消</button>
+      <button id="fs-ok" class="primary">选择这个文件夹</button>
+    </div>
+  </div>
+</div>
+
+<script src="/ui/app.js"></script>
+</body>
+</html>

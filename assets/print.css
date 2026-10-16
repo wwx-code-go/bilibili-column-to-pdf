@@ -1,0 +1,255 @@
+/* 打印样式：页面尺寸/页边距/页眉页脚由 Chrome 的 Page.printToPDF 提供，
+   这里只管排版本身。 */
+
+* { box-sizing: border-box; }
+
+html {
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+body {
+  margin: 0;
+  font-family: "Microsoft YaHei", "PingFang SC", "Hiragino Sans GB",
+               "Source Han Sans SC", "Noto Sans CJK SC", sans-serif;
+  font-size: 10.5pt;
+  line-height: 1.75;
+  color: #1c1c1c;
+}
+
+.u {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: .88em;
+  color: #5a5a5a;
+  word-break: break-all;
+}
+
+/* ------------------------------------------------------------------ 封面 */
+.cover {
+  padding-top: 55mm;
+  text-align: center;
+  break-after: page;
+}
+.cover-top {
+  font-size: 11pt;
+  letter-spacing: .45em;
+  color: #8d8d8d;
+  margin-bottom: 12mm;
+}
+.cover-title {
+  font-size: 36pt;
+  line-height: 1.25;
+  margin: 0 0 7mm;
+  letter-spacing: .05em;
+  font-weight: 700;
+}
+.cover-sub {
+  font-size: 12pt;
+  color: #6b6b6b;
+  margin-bottom: 14mm;
+}
+.cover-part {
+  font-size: 13pt;
+  font-weight: 700;
+  color: #b0301f;
+  letter-spacing: .18em;
+  margin: -2mm 0 6mm;
+}
+.cover-rule {
+  width: 44mm;
+  height: 2px;
+  background: #c0392b;
+  margin: 0 auto 14mm;
+}
+.cover-meta {
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 10.5pt;
+}
+.cover-meta th {
+  text-align: right;
+  padding: 2.2mm 5mm 2.2mm 0;
+  color: #8d8d8d;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.cover-meta td {
+  text-align: left;
+  padding: 2.2mm 0;
+}
+.cover-foot {
+  margin-top: 22mm;
+  font-size: 9pt;
+  color: #9a9a9a;
+  line-height: 1.8;
+}
+.cover-note {
+  margin-top: 7mm;
+  font-size: 9pt;
+  color: #9a9a9a;
+}
+
+/* ------------------------------------------------------------------ 目录 */
+.toc { break-after: page; }
+.toc-title {
+  font-size: 22pt;
+  text-align: center;
+  margin: 0 0 4mm;
+  letter-spacing: .3em;
+}
+.toc-title::after {
+  content: "";
+  display: block;
+  width: 30mm;
+  height: 2px;
+  background: #c0392b;
+  margin: 5mm auto 0;
+}
+/* 多个文集合并时，目录里的文集级标题 */
+.toc-book {
+  font-size: 14pt;
+  font-weight: 700;
+  margin: 11mm 0 2mm;
+  padding: 2mm 0 1.5mm;
+  border-bottom: 2px solid #c0392b;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+.toc-book-count {
+  font-size: 9pt;
+  font-weight: 400;
+  color: #9a9a9a;
+  margin-left: .7em;
+}
+.toc-group {
+  font-size: 11.5pt;
+  font-weight: 700;
+  color: #b0301f;
+  margin: 7mm 0 1.5mm;
+  padding-bottom: 1.2mm;
+  border-bottom: 1px solid #e6e6e6;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+.toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.toc-list li { margin: 0; }
+.toc-list a {
+  display: flex;
+  gap: .7em;
+  text-decoration: none;
+  color: inherit;
+  font-size: 10pt;
+  line-height: 1.6;
+  padding: .35mm 0;
+}
+.toc-no {
+  flex: 0 0 3.2em;
+  text-align: right;
+  color: #9a9a9a;
+}
+.toc-t { flex: 1 1 auto; }
+
+/* -------------------------------------------------- 合集里每个文集的隔页 */
+.book-divider {
+  break-before: page;
+  page-break-before: always;
+  padding-top: 70mm;
+  text-align: center;
+}
+.book-divider-title {
+  font-size: 26pt;
+  line-height: 1.4;
+  margin: 0 0 6mm;
+}
+.book-divider-sub {
+  font-size: 11pt;
+  color: #6b6b6b;
+}
+
+/* ------------------------------------------------------------------ 正文 */
+.article { break-before: page; page-break-before: always; }
+
+.art-title {
+  font-size: 16pt;
+  line-height: 1.45;
+  margin: 0 0 2.5mm;
+  font-weight: 700;
+}
+.art-no { color: #c0392b; margin-right: .35em; }
+
+.art-meta {
+  font-size: 8.5pt;
+  color: #8d8d8d;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 2mm;
+  margin-bottom: 5mm;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+.art-body p {
+  margin: 0 0 .38em;
+  text-align: justify;
+  text-justify: inter-ideograph;
+  orphans: 2;
+  widows: 2;
+}
+.art-body p:empty { margin: 0; height: .55em; }
+
+.art-body figure {
+  margin: 3.5mm 0;
+  text-align: center;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+.art-body figure img {
+  /* 关键：必须同时限宽和限高。
+     很多文集的正文是整页扫描图（实测 1794×2702），只限宽的话按 A4 正文宽
+     缩放后高度会到 271mm，而正文区只有 267mm —— 超高一点点，就会让下面的
+     break-inside:avoid 无法满足：Chrome 把图整体推到下一页（上一页留大片空白），
+     然后在页边界把图切开。限高后「一张扫描页 = 一个 PDF 页」，不再出现这两种情况。 */
+  max-width: 100%;
+  max-height: 230mm;
+  width: auto;
+  height: auto;
+}
+.art-body figcaption {
+  font-size: 8.5pt;
+  color: #8d8d8d;
+  line-height: 1.6;
+  margin-top: 1.2mm;
+}
+.art-body strong { font-weight: 700; }
+.art-body .err-danger-word { color: #9a9a9a; }
+
+/* 正文里作者自己写的小标题（已按层级下沉，见 build.mjs 的 remapHeadings） */
+.art-body h2, .art-body h3, .art-body h4, .art-body h5, .art-body h6 {
+  line-height: 1.5;
+  margin: 5mm 0 2mm;
+  font-weight: 700;
+  break-after: avoid;
+  page-break-after: avoid;
+}
+.art-body h2 { font-size: 14pt; }
+.art-body h3 { font-size: 12.5pt; }
+.art-body h4 { font-size: 11.5pt; }
+.art-body h5, .art-body h6 { font-size: 10.5pt; }
+
+/* 旧版专栏编辑器用 .font-size-N 表示字号，N 就是像素值；现网已不再定义这些类，
+   但类名本身是自描述的，所以按 N px → N×0.75pt 还原，找回原文的小标题层级。
+   而 color-* 只编码调色板槽位、没有色值，故不臆造，保持与现网一致的呈现。 */
+.art-body .font-size-12 { font-size: 9pt; }
+.art-body .font-size-16 { font-size: 12pt; }
+.art-body .font-size-20 { font-size: 15pt; line-height: 1.5; }
+.art-body .font-size-23 { font-size: 17.25pt; line-height: 1.45; }
+
+.img-missing {
+  display: block;
+  color: #b0301f;
+  font-size: 9pt;
+  padding: 3mm 0;
+}
